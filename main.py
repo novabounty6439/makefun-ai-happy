@@ -15,10 +15,15 @@ SOURCE = HERE / "happy.jpg"
 
 
 def main() -> None:
+    if not SOURCE.is_file():
+        raise SystemExit(f"Source image not found: {SOURCE}")
     out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "entry.png"
     shutil.copyfile(SOURCE, out_path)
+    # Verify the copy is complete: sizes must match exactly.
+    if out_path.stat().st_size != SOURCE.stat().st_size:
+        raise SystemExit(f"Copy incomplete: {out_path} size mismatch")
     print(f"Wrote {out_path} ({out_path.stat().st_size} bytes)")
 
 
